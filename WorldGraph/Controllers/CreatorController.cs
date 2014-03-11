@@ -1,41 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using WorldGraph.GraphStorage;
+using System.Web;
+using System.Web.Mvc;
 
 namespace WorldGraph.Controllers
 {
-    public class CreatorController : ApiController
+    public class CreatorController : Controller
     {
-        private IGraphStorage model;
-
-        public CreatorController(IGraphStorage model)
+        //
+        // GET: /Creator/
+        public ActionResult Index()
         {
-            this.model = model;
+            return View();
         }
-
-
-        [HttpPut]
-        [Route("api/tag/add/{tag}")]
-        public bool InsertTag(string tag)
-        {
-            if (model.TagExists(tag))
-                return false;
-            else
-            {
-                model.AddTag(tag);
-                return true;
-            }
-        }
-
-        [HttpGet]
-        [Route("api/tag")]
-        public IList<Tag> GetTags()
-        {
-            return model.GetAllTags();
-        }
-    }
+	}
 }
