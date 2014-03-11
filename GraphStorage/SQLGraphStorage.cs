@@ -35,5 +35,11 @@ namespace WorldGraph.GraphStorage
                 throw new GraphStorageException(e);
             }
         }
+
+
+        public IList<Tag> GetAllTags()
+        {
+            return db.Tags.AsQueryable().OrderBy(s=>s.Value).ToList();
+        }
     }
 }
