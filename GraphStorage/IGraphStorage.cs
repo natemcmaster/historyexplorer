@@ -12,7 +12,5 @@ namespace WorldGraph.GraphStorage
         bool TagExists(string tag);
 
         void AddTag(string tag);
-
-        IList<Tag> GetAllTags();
     }
 }

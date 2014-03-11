@@ -30,12 +30,5 @@ namespace WorldGraph.Controllers
                 return true;
             }
         }
-
-        [HttpGet]
-        [Route("api/tag")]
-        public IList<Tag> GetTags()
-        {
-            return model.GetAllTags();
-        }
     }
 }

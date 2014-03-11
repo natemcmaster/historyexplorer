@@ -1,15 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="WorldGraph" Class="SQLGraphProviderDataContext" AccessModifier="Internal" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=(localdb)\Projects;Initial Catalog=WorldGraph;Integrated Security=True" SettingsObjectName="WorldGraph.GraphStorage.Properties.Settings" SettingsPropertyName="WorldGraphConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.Tags" Member="Tags">
-    <Type Name="Tag">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Value" Type="System.String" DbType="VarChar(250) NOT NULL" CanBeNull="false" />
-      <Association Name="Tag_NodeTag" Member="NodeTags" ThisKey="Id" OtherKey="TagId" Type="NodeTag" />
-    </Type>
-  </Table>
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="world_idea_graph" Class="SQLGraphProviderDataContext" AccessModifier="Internal" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=yuv108xsei.database.windows.net;Initial Catalog=world_idea_graph;Persist Security Info=True;User ID=world_idea_graph_script" SettingsObjectName="WorldGraph.GraphStorage.Properties.Settings" SettingsPropertyName="world_idea_graphConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Edges" Member="Edges">
     <Type Name="Edge">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="NodeFrom" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="NodeTo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Association Name="Node_Edge" Member="Node" ThisKey="NodeFrom" OtherKey="Id" Type="Node" IsForeignKey="true" />
@@ -18,7 +11,7 @@
   </Table>
   <Table Name="dbo.Nodes" Member="Nodes">
     <Type Name="Node">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Subject" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
       <Column Name="Description" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="Year" Type="System.Int32" DbType="Int" CanBeNull="true" />
@@ -32,7 +25,7 @@
   </Table>
   <Table Name="dbo.NodeTags" Member="NodeTags">
     <Type Name="NodeTag">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="TagId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="NodeId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Association Name="Node_NodeTag" Member="Node" ThisKey="NodeId" OtherKey="Id" Type="Node" IsForeignKey="true" />
@@ -41,12 +34,19 @@
   </Table>
   <Table Name="dbo.Places" Member="Places">
     <Type Name="Place">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="City" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Column Name="Region" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Column Name="Latitude" Type="System.Decimal" DbType="Decimal(10,8)" CanBeNull="true" />
       <Column Name="Longitude" Type="System.Decimal" DbType="Decimal(11,8)" CanBeNull="true" />
       <Association Name="Place_Node" Member="Nodes" ThisKey="Id" OtherKey="PlaceId" Type="Node" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Tags" Member="Tags">
+    <Type Name="Tag">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Value" Type="System.String" DbType="VarChar(250) NOT NULL" CanBeNull="false" />
+      <Association Name="Tag_NodeTag" Member="NodeTags" ThisKey="Id" OtherKey="TagId" Type="NodeTag" />
     </Type>
   </Table>
 </Database>
