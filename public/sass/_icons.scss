@@ -1,0 +1,32 @@
+$fontRoot: '/public/fonts/';
+@font-face {
+	font-family: 'icomoon';
+	src:url($fontRoot+'icomoon.eot?-uzgax7');
+	src:url($fontRoot+'icomoon.eot?#iefix-uzgax7') format('embedded-opentype'),
+		url($fontRoot+'icomoon.woff?-uzgax7') format('woff'),
+		url($fontRoot+'icomoon.ttf?-uzgax7') format('truetype'),
+		url($fontRoot+'icomoon.svg?-uzgax7#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-expand:before {
+	content: "\e01a";
+}
+.icon-linegraph:before {
+	content: "\e039";
+}
