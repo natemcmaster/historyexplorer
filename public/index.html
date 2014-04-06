@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="graphApp">
 
 <head>
     <title>History Explorer</title>
@@ -14,15 +14,13 @@
         } catch (e) {}
     </script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js.map"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js.map"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.4/d3.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js"></script>
 
-    <script type="text/javascript" src="/js/GraphCtrl.js"></script>
     <script type="text/javascript" src="/js/SideBarCtrl.js"></script>
+    <script type="text/javascript" src="/js/GraphCtrl.js"></script>
+    <script type="text/javascript" src="/js/GraphData.js"></script>
     <script type="text/javascript" src="/js/app.js"></script>
+    
 </head>
 
 <body>
@@ -68,7 +66,7 @@
                 <div class="related " ng-show="related">
                     <h3>Related</h3>
                     <ul>
-                        <li ng-repeat="item in related">{{item}}
+                        <li ng-repeat="item in related" ng-click="loadRelated(item)">{{item}}
                             <span class="icon-expand "></span>
                         </li>
                     </ul>

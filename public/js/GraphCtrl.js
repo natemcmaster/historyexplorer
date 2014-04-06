@@ -1,8 +1,16 @@
-function GraphCtrl($scope, $http, $element) {
+function Link(a,b) {
+    this.a=a;
+    this.b=b;
+}
+
+function GraphCtrl($scope, $http, $element, GraphData) {
     this.w = 500;
     this.h = 500;
-    this.levels = 2;
-    this.MAX_LEVEL = 3;
+    this.MAX_LEVEL = 2;
+    this.maxNodeRadius = 40;
+    this.minNodeRadius = 15;
+    this.GraphData = GraphData;
+    
     this.svg = d3.select($element[0])
         .append('svg')
         .attr('viewBox', [0, 0, this.w, this.h].join(' '))
@@ -10,25 +18,19 @@ function GraphCtrl($scope, $http, $element) {
 
     this.links = this.svg.selectAll('.link');
     this.nodes = this.svg.selectAll('.node');
-
-    $http.get('/data.json', {
-        'responseType': 'json'
-    })
-        .success(function (graph, error) {
-            this.graphData = graph;
-            this.centerOnNode('A');
-        }.bind(this));
-}
-
-function Link(x, y, toX, toY) {
-    var args = arguments;
-    ['x', 'y', 'toX', 'toY'].forEach(function (p, i) {
-        this[p] = args[i] || 0;
+    
+    GraphData.on('select.node',function(event,id){
+        this.centerOnNode(id);
     }.bind(this));
 }
 
+GraphCtrl.prototype.selectNode = function(id){
+    this.GraphData.emit('select.node',id);
+}
+
 GraphCtrl.prototype.centerOnNode = function (ctr) {
-    var center = this.graphData.nodes[ctr];
+    this.svg.selectAll('.link,.node,.node-label').data([]).exit().remove();
+    var center = this.GraphData.node(ctr);
     if (!center)
         throw new Error('Could not find that node');
     delete center.toX;
@@ -47,12 +49,12 @@ GraphCtrl.prototype.drawChildren = function (pid, level) {
     level = level || 0;
     if (level > this.MAX_LEVEL)
         return;
-    var children = this.graphData.links[pid];
-    var parent = this.graphData.nodes[pid];
+    var children = this.GraphData.links(pid);
+    var parent = this.GraphData.node(pid);
     if (!children)
         return;
     children = children.filter(function (id) {
-        var node = this.graphData.nodes[id];
+        var node = this.GraphData.node(id);
         return node && !node.queued;
     }.bind(this));
     if (!children.length)
@@ -64,13 +66,13 @@ GraphCtrl.prototype.drawChildren = function (pid, level) {
     var subArc = pie / c;
     var baseTilt = parent.tilt - pie / 2;
     children.forEach(function (id, i) {
-        var s = this.graphData.nodes[id];
+        var s = this.GraphData.node(id);
         s.level = level;
         s.arc = subArc;
         s.tilt = (i + 1) * subArc + baseTilt;
         s.toX = radius * Math.cos(s.tilt) + parent.toX;
         s.toY = radius * Math.sin(s.tilt) + parent.toY;
-        var link = new Link(parent.toX, parent.toY, s.toX, s.toY);
+        var link = new Link(parent,s);
         this.queue(link);
         this.queue(s);
         return s;
@@ -129,30 +131,38 @@ GraphCtrl.prototype.draw = function () {
         }
     }
     var scale = 100;
-    var radius = 25;
+    var radius = function(d){
+        var flex = this.maxNodeRadius-this.minNodeRadius;
+        return flex/(d.level+1) + this.minNodeRadius;
+    }.bind(this);
     var normToX = function (n) {
         return n.toX * scale + this.w / 2;
     }.bind(this);
     var normToY = function (n) {
         return n.toY * scale + this.h / 2;
     }.bind(this);
-    var normX = function (n) {
-        return n.x * scale + this.w / 2;
-    }.bind(this);
-    var normY = function (n) {
-        return n.y * scale + this.h / 2;
-    }.bind(this);
 
     this.links.data(links)
         .enter()
         .append('line')
         .attr('class', 'link')
-        .attr('x1', normX).attr('y1', normY)
-        .attr('x2', normToX).attr('y2', normToY);
+        .attr('x1', function(l){
+            return normToX(l.a);
+        }).attr('y1',function(l){
+            return normToY(l.a);
+        })
+        .attr('x2', function(l){
+            return normToX(l.b);
+        }).attr('y2', function(l){
+            return normToY(l.b);
+        });
 
     var d = this.nodes.data(nodes);
     d.enter()
         .append('circle')
+        .on('click',function(d){
+            this.selectNode(d.id);
+        }.bind(this))
         .attr('class', function (n) {
             return 'node level-' + n.level;
         })
@@ -162,41 +172,15 @@ GraphCtrl.prototype.draw = function () {
             return d.id
         })
         .attr('r', radius);
+    
     d.enter().append('text')
+        .on('click',function(d){
+            this.selectNode(d.id);
+        }.bind(this))
         .text(function (d) {
             return d.id
         })
         .attr('class', 'node-label')
         .attr('x', normToX)
         .attr('y', normToY)
-}
-
-GraphCtrl.prototype.show = function (center, nodes, arc, startArc) {
-    arc = arc || 2 * Math.PI;
-    startArc = startArc || 0;
-    var d = [center].concat(nodes);
-    var scale = 100;
-    var radius = 25;
-    var normX = function (n) {
-        return n.level * (Math.cos(n.piece * arc + startArc)) * scale + this.w / 2;
-    }.bind(this);
-    var normY = function (n) {
-        return n.level * (Math.sin(n.piece * arc + startArc)) * scale + this.h / 2;
-    }.bind(this);
-    this.links.data(d)
-        .enter()
-        .append('line')
-        .attr('class', 'link')
-        .attr('x1', normX(center)).attr('y1', normY(center))
-        .attr('x2', normX).attr('y2', normY);
-
-    this.nodes.data(d)
-        .enter()
-        .append('circle')
-        .attr('class', function (n) {
-            return 'node level-' + n.level;
-        })
-        .attr('cx', normX)
-        .attr('cy', normY)
-        .attr('r', radius);
 }

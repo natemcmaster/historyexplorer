@@ -1,4 +1,2 @@
 var graphApp = angular.module('graphApp', []);
-
-graphApp.controller('SideBarCtrl', SideBarCtrl);
-graphApp.controller('GraphCtrl', GraphCtrl);
+graphApp.service('GraphData', ['$rootScope','$http','$location',GraphData]);
