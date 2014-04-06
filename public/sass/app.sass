@@ -13,13 +13,14 @@ html,body
     height: 100%
         
 /* COLORS */
-$primary: #00AAB5
+$primary: #0079d1
 $secondary: #C1C923
 $highlight: #F41C54
 $tertiary: #002E3F
-
+$pageSeparator: 1px solid darken(white,20%)
+    
 a
-    color: blue
+    color: $primary
     text-decoration: none
     +transition(all 200ms ease)
     &:hover
@@ -35,12 +36,16 @@ $headerHeight: 45px
     background: $primary
     color: white
     padding: $pad
+    padding-left: 2 * $pad
     z-index: 100
     position: absolute
     top: 0
     left: 0
     right: 0
     height: $headerHeight - 2 * $pad
+    small
+        font-size: 12pt
+        padding-left: 1em
         
 @import sidebar
 @import graph
@@ -49,6 +54,7 @@ $headerHeight: 45px
     +transition(width 400ms ease)
 .page
     padding-top: $headerHeight
+    width: 100%
     z-index: 50
     &:after 
     content: ""
@@ -57,7 +63,45 @@ $headerHeight: 45px
     .sidebar
         +sidebar
     .content
-        +graph
+        +sidebarTransision
+        position: relative
+        float: left
+        width: 75%
+        height: 100%
+        display: inline-block
+        $toolbar: 40px
+        .toolbar
+            position: absolute
+            top: 0
+            width: 100%
+            height: $toolbar
+            border-bottom: $pageSeparator
+            padding-right: 10px
+            $searchIcon: 20px
+            
+            span[class^="icon"]
+                width: $searchIcon
+                position: absolute
+                left: 10px
+                top: 10px
+            
+            input[type="search"]
+                +bodyFont
+                -webkit-appearance: caret
+                height: 100%
+                outline: none
+                border: none
+                width: 100%
+                $pad: 10px
+                padding-left: $searchIcon + $pad
+                padding-right: $pad
+                font-size: $toolbar - 2 * $pad
+        
+        .graph
+            padding-top: $toolbar
+            height: 100%
+            backgroun
+            +graph
         
     height: 100%
     &.hide-sidebar

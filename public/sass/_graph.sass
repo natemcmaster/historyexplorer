@@ -1,7 +1,21 @@
 =graph
-    +sidebarTransision
-    float: left
-    width: 75%
-    height: 100%
-    padding: 10px
-    display: inline-block
+    background: white
+    svg
+        height: 100%
+        width: 100%
+        display: inline-block
+            
+        .link 
+            stroke: black
+            stroke-width: 1.5px
+
+        .node 
+            cursor: pointer
+            fill: lighten(invert($primary),35%)
+            stroke: #000
+            stroke-width: 1.5px
+            
+            &.level-0
+                fill: $highlight
+            &.level-1
+                fill: lighten(invert($primary),15%)

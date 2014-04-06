@@ -1,49 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app>
+
 <head>
-    <title>Ideas</title>
-     <meta charset="utf-8">
+    <title>History Explorer</title>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/app.css" />
     <script type="text/javascript" src="http://use.typekit.net/oqq0qpe.js"></script>
-	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <script type="text/javascript">
+        try {
+            Typekit.load();
+        } catch (e) {}
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js.map"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js.map"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.4/d3.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js"></script>
+
+    <script type="text/javascript" src="/js/GraphCtrl.js"></script>
+    <script type="text/javascript" src="/js/SideBarCtrl.js"></script>
+    <script type="text/javascript" src="/js/app.js"></script>
 </head>
-    <body>
-     <div class="container">
+
+<body>
+    <div class="container">
         <nav class="header">
-            <h1>World Graph</h1>
+            <h1>
+                <span class="icon-hotairballoon"></span> 
+                History Explorer
+                <small>Explore the connections between people, places, and ideas</small>
+            </h1>
         </nav>
-       
-        <div class="page">
+
+        <div class="page hide-sideba">
             <div class="content">
-            text
+                <div class="toolbar">
+                    <span class="icon-magnifying-glass"></span>
+                    <input type="search" placeholder="Search for a term" ng-model="searchTerm"/>
+                </div>
+                <div class="graph" ng-controller="GraphCtrl">
+                </div>
             </div>
-            <div class="sidebar">
-                <div class="hero animate">
-                    <div style="background-image: url(http://2.bp.blogspot.com/-_Hn78_KSOBk/UlQFaz-SkXI/AAAAAAAAARc/-M1kV9yGLUY/s1600/leonardo-da-vinci-08.jpg)"></div>
-                    <p>
-                        Leonardo da Vinci
+            <div class="sidebar" ng-controller="SideBarCtrl">
+                <div class="hero animate" ng-show="heroImage">
+                    <div ng-style="{'background-image':'url('+heroImage+')'}"></div>
+                    <p ng-show="caption">
+                        {{caption}}
                     </p>
                 </div>
-                <div class="heading">
-                    <h1>Leonardo da Vinci</h1>
-                    <h2>1403-1434</h2>
-                    </div>
-                <div class="article">
-                    <p>Leonardo di ser Piero da Vinci (Italian pronunciation: [leoˈnardo da vˈvintʃi]  pronunciation ; April 15, 1452 – May 2, 1519, Old Style) was an Italian Renaissance polymath: painter, sculptor, architect, musician, mathematician, engineer, inventor, anatomist, geologist, cartographer, botanist, and writer. His genius, perhaps more than that of any other figure, epitomized the Renaissance humanist ideal. Leonardo has often been described as the archetype of the Renaissance Man, a man of "unquenchable curiosity" and "feverishly inventive imagination"...</p>
-                    <p><a href="wikipedia">Read more <span class="icon-right-arrow"></span></a></p>
+                <div class=" heading ">
+                    <h1>{{title}}</h1>
+                    <h2 ng-show="subtitle ">{{subtitle}}</h2>
                 </div>
-                <div class="related">
+                <div class="article ">
+                    <p>{{description}}</p>
+
+                    <small ng-show="source">Source: {{source}}</small>
+                    <p ng-show="sourceURI">
+                        <a ng-href="{{sourceURI}}" target="_blank">Read more
+                            <span class="icon-arrow-right "></span>
+                        </a>
+                    </p>
+                </div>
+                <div class="related " ng-show="related">
                     <h3>Related</h3>
                     <ul>
-                        <li>Bernini de Venci <span class="icon-expand"></span></li>
-                        <li>Pizza<span class="icon-expand"></span></li>
-                        <li>Charuscurro<span class="icon-expand"></span></li>
+                        <li ng-repeat="item in related">{{item}}
+                            <span class="icon-expand "></span>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-        </div>
-    </body>
+    </div>
+</body>
+
 </html>

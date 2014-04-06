@@ -1,0 +1,38 @@
+{
+    "links": {
+        "A": ["B", "C", "G", "H", "I"],
+        "B": ["A"],
+        "C": ["A", "D"],
+        "D": ["C"]
+    },
+    "nodes": {
+        "A": {
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "B": {
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "C": {
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "D": {
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "G": {
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "H": {
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "I": {
+            "title": "Title for node A",
+            "description": "Sample data"
+        }
+    }
+}

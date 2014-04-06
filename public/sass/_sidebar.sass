@@ -6,7 +6,7 @@
     background: white
     color: black
     overflow-y: auto
-    +box-shadow(0 0 25px 0 rgba(0,0,0,0.5))
+    border-left: $pageSeparator
     +sidebarTransision
         
     $gutter: 10px
@@ -24,7 +24,7 @@
             padding: 2px
             padding-right: 10px
             +bodyFont
-            font-size: 16pt
+            font-size: 12pt
             +text-shadow(0 0 5px rgba(0,0,0,0.4))
             color: white
         div
@@ -39,20 +39,21 @@
         &.animate div
             +animation(kenburns,5s,ease)
     .heading
-        padding: 10px $gutter 5px
+        padding: 10px $gutter
         background: $highlight
         color: white
         h1, h2
             margin: 0
     .article
         padding: 5px $gutter
+        width: 100%
         
     .related
         h3
             background: $tertiary
             color: white
             margin: 5px 0 0
-            padding: 10px $gutter 5px
+            padding: 5px $gutter
         ul
             margin: 0 
             
