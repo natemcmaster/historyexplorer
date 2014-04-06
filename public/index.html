@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="sidebar" ng-controller="SideBarCtrl">
-                <div class="hero animate" ng-show="heroImage">
+                <div class="hero" ng-class="{true:'animate'}[animate]" ng-show="heroImage">
                     <div ng-style="{'background-image':'url('+heroImage+')'}"></div>
                     <p ng-show="caption">
                         {{caption}}
@@ -54,19 +54,19 @@
                     <h2 ng-show="subtitle ">{{subtitle}}</h2>
                 </div>
                 <div class="article ">
-                    <p>{{description}}</p>
+                    <p>{{description | cut:maxDesc:true}}
+                    </p>
+                    <p>
+                    <a ng-href="{{sourceURI}}" target="_blank"  ng-if="sourceURI">Read more on {{source}}
+                            <span class="icon-arrow-right "></span>
+                        </a></p>
 
                     <small ng-show="source">Source: {{source}}</small>
-                    <p ng-show="sourceURI">
-                        <a ng-href="{{sourceURI}}" target="_blank">Read more
-                            <span class="icon-arrow-right "></span>
-                        </a>
-                    </p>
                 </div>
                 <div class="related " ng-show="related">
                     <h3>Related</h3>
                     <ul>
-                        <li ng-repeat="item in related" ng-click="loadRelated(item)">{{item}}
+                        <li ng-repeat="item in related" ng-click="loadRelated(item)">{{relatedTitle(item)}}
                             <span class="icon-expand "></span>
                         </li>
                     </ul>

@@ -1,8 +1,10 @@
-=sidebar
+$kenburnsZoom: 1.2
+
+=sidebar($width)
     float: left
     display: inline-block
     height: 100%
-    width: 25%
+    width: $width
     background: white
     color: black
     overflow-y: auto
@@ -10,7 +12,7 @@
     +sidebarTransision
         
     $gutter: 10px
-        
+    
     .hero
         height: 200px
         position: relative
@@ -35,9 +37,10 @@
             background-repeat: no-repeat
             background-position: center center
             background-size: cover
-            +scale(1)
+            +scale($kenburnsZoom)
         &.animate div
-            +animation(kenburns,5s,ease)
+            +scale(1)
+            +animation(kenburns,8s,ease)
     .heading
         padding: 10px $gutter
         background: $highlight
@@ -72,6 +75,6 @@
         
 +keyframe('kenburns')
     from
-        +scale(1.3)
+        +scale($kenburnsZoom)
     to
         +scale(1)

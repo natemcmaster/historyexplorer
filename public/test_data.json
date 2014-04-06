@@ -1,0 +1,79 @@
+{
+    "links": {
+        "A": ["B",  "G", "C","I","D"],
+        "B": ["A","J","K","M"],
+        "C": ["A", "D","H"],
+        "D": ["C","M"],
+        "G": ["L"],
+        "H":["E"],
+        "K":["F"],
+        "I":["A"]
+    },
+    "nodes": {
+        "A": {
+            "id": "A",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "B": {
+            "id": "B",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "C": {
+            "id": "C",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "D": {
+            "id": "D",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "E": {
+            "id": "E",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "F": {
+            "id": "F",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "G": {
+            "id": "G",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "H": {
+            "id": "H",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "I": {
+            "id": "I",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "J": {
+            "id": "J",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "K": {
+            "id": "K",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "L": {
+            "id": "L",
+            "title": "Title for node A",
+            "description": "Sample data"
+        },
+        "M": {
+            "id": "M",
+            "title": "Title for node A",
+            "description": "Sample data"
+        }
+    }
+}

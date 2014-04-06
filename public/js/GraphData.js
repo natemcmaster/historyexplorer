@@ -4,13 +4,13 @@ function GraphData($rootScope,$http,$location) {
     })
         .success(function (graph, error) {
             this.data = graph;
-            this.emit('select.node', 'A');
+            this.emit('select.node', '341');
         }.bind(this));
     this.events = {};
     this.data = {nodes:{},links:{}};
     this.$location = $location;
     $rootScope.$on('$locationChangeSuccess',function(){
-        var id = this.$location.search().q;
+        var id = this.$location.search().id;
         if(id && this.node(id) && this.selected !== id)
             this.emit('select.node',id,true);
     }.bind(this));
@@ -32,7 +32,7 @@ GraphData.prototype.emit = function (event) {
             return;
         args = [args[0], this.node(args[0]), this.links(args[0])];
         this.selected = args[0];
-        this.$location.search('q',args[0]);
+        this.$location.search('id',args[0]);
     }
     if (!this.events[event])
         return;

@@ -6,7 +6,7 @@
         display: inline-block
             
         .link 
-            stroke: black
+            stroke: darken(white,15%)
             stroke-width: 1.5px
 
         .node 
@@ -20,5 +20,6 @@
             &.level-1
                 fill: lighten(invert($primary),15%)
         .node-label
+            cursor: pointer
+            font-size: 10pt
             text-anchor: middle
-            dominant-baseline: central

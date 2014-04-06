@@ -1,3 +1,5 @@
+// animate: http://stackoverflow.com/questions/11007640/fit-text-into-svg-element-using-d3-js
+
 function Link(a,b) {
     this.a=a;
     this.b=b;
@@ -7,8 +9,9 @@ function GraphCtrl($scope, $http, $element, GraphData) {
     this.w = 500;
     this.h = 500;
     this.MAX_LEVEL = 2;
-    this.maxNodeRadius = 40;
-    this.minNodeRadius = 15;
+    this.maxNodeRadius = 20;
+    this.minNodeRadius = 10;
+    this.lineSpacing = 15;
     this.GraphData = GraphData;
     
     this.svg = d3.select($element[0])
@@ -158,11 +161,12 @@ GraphCtrl.prototype.draw = function () {
         });
 
     var d = this.nodes.data(nodes);
-    d.enter()
-        .append('circle')
-        .on('click',function(d){
+    var g = d.enter().append('g');
+
+        g.on('click',function(d){
             this.selectNode(d.id);
         }.bind(this))
+        .append('circle')
         .attr('class', function (n) {
             return 'node level-' + n.level;
         })
@@ -172,15 +176,21 @@ GraphCtrl.prototype.draw = function () {
             return d.id
         })
         .attr('r', radius);
-    
-    d.enter().append('text')
-        .on('click',function(d){
-            this.selectNode(d.id);
-        }.bind(this))
-        .text(function (d) {
-            return d.id
-        })
+    var ls = this.lineSpacing;
+    g.append('text')
         .attr('class', 'node-label')
         .attr('x', normToX)
-        .attr('y', normToY)
+        .attr('y', function(d){
+            var cy = normToY(d);
+            return cy+radius(d);
+        }).each(function (d) {
+            var el = d3.select(this);
+            var words = d.title.split(' ');
+            el.text('');
+
+            for (var i = 0; i < words.length; i++) {
+                var tspan = el.append('tspan').text(words[i]);
+                tspan.attr('x', normToX(d)).attr('dy', ls);
+            }
+        });
 }
