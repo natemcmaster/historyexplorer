@@ -10,12 +10,14 @@ function SideBarCtrl($scope, GraphData) {
         // $scope.caption = 'Portrait of Leonardo da Vinci';
         // $scope.subtitle = '1452-1519';
         $scope.description = node.description;
-        var img = new Image();
-        img.onload = function() {
-            $scope.animate = true;
-            $scope.$apply();
-        };
-        img.src = node.image;
+        if(node.image){
+            var img = new Image();
+            img.onload = function() {
+                $scope.animate = true;
+                $scope.$apply();
+            };
+            img.src = node.image;
+        }
         $scope.source = node.source;
         $scope.sourceURI = node.url;
         $scope.$apply();

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="graphApp">
+<html lang="en" ng-app="graphApp" ng-keypress="$broadcast('keypress',$event)">
 
 <head>
     <title>History Explorer</title>
@@ -40,9 +40,9 @@
             <div class="content">
                 <div class="searchbar" ng-controller="SearchCtrl">
                     <span class="icon-magnifying-glass"></span>
-                    <input type="search" placeholder="Search for a term" ng-model="searchQuery" ng-blur="clear()" ng-submit="$event.preventDefault()"/>
+                    <input type="search" placeholder="Search for a term" ng-model="searchQuery" ng-blur="clear(100)" ng-submit="$event.preventDefault()" ng-keydown="searchKey($event)"/>
                     <div class="matches" ng-if="matches">
-                        <div class="match" ng-repeat="node in matches " ng-click="goTo(node.id)" >
+                        <div class="match" ng-repeat="node in matches" ng-click="goTo(node.id)" ng-class="{active: $parent.selectedResult == $index}">
                             {{node.title}}
                         </div>
                     </div>
@@ -51,15 +51,15 @@
                 </div>
             </div>
             <div class="sidebar" ng-controller="SideBarCtrl">
-                <div class="hero" ng-class="{true:'animate'}[animate]" ng-show="heroImage">
+                <div class="hero" ng-class="{true:'animate'}[animate]" ng-if="heroImage">
                     <div ng-style="{'background-image':'url('+heroImage+')','background-size':imageSize}"></div>
-                    <p ng-show="caption">
+                    <p ng-if="caption">
                         {{caption}}
                     </p>
                 </div>
                 <div class=" heading ">
                     <h1>{{title}}</h1>
-                    <h2 ng-show="subtitle ">{{subtitle}}</h2>
+                    <h2 ng-if="subtitle ">{{subtitle}}</h2>
                 </div>
                 <div class="article ">
                     <p>{{description | cut:maxDesc:true}}
@@ -69,9 +69,9 @@
                             <span class="icon-arrow-right "></span>
                         </a></p>
 
-                    <small ng-show="source">Source: {{source}}</small>
+                    <small ng-if="source">Source: {{source}}</small>
                 </div>
-                <div class="related " ng-show="related">
+                <div class="related " ng-if="related">
                     <h3>Related</h3>
                     <ul>
                         <li ng-repeat="item in related" ng-click="loadRelated(item)">{{relatedTitle(item)}}
