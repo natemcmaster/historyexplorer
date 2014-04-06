@@ -34,6 +34,7 @@ def pair():
 			except:
 				return jsonify(status='Already added'),500
 		conn.commit()
+	exporter.writefile('../public/data.json')
 	return msg,200
 
 
@@ -50,6 +51,7 @@ def review():
 			except Exception as e:
 				return jsonify(status='Error: ' + str(e)),500
 		conn.commit()
+	exporter.writefile('../public/data.json')
 	return msg,200
 
 
@@ -58,15 +60,17 @@ def images():
 	d=request.get_json()
 	id=d['id']
 	url=d['url']
+	size=d['size']
 	msg = 'Adding image %s <-> %s' % (id,url)
 	with open_db() as conn:
 		with conn.cursor() as cursor:
 			try:
-				cursor.execute('''update nodes set image = %s where id = %s
-				               ''',(url,id))
+				cursor.execute('''update nodes set image = %s ,image_size = %s where id = %s
+				               ''',(url,size,id))
 			except:
 				return jsonify(status='Error'),500
 		conn.commit()
+	exporter.writefile('../public/data.json')
 	return msg,200
 
 @app.route('/api/edges',methods=['GET'])
@@ -74,10 +78,10 @@ def get_edges():
 	edges=[]
 	with open_db() as conn:
 		with conn.cursor() as cursor:
-			cursor.execute('select id,name,description,all_images,image from nodes order by name')
+			cursor.execute('select id,name,description,all_images,image,image_size from nodes order by name')
 			edges = cursor.fetchall()
 
-	edges = map(lambda x: {'id':x[0],'image':x[4],'title':x[1],'description':x[2],'images':list(set(json.loads(x[3])))},edges)
+	edges = map(lambda x: {'id':x[0],'image':x[4],'title':x[1],'description':x[2],'image_size':x[5],'images':list(set(json.loads(x[3])))},edges)
 	return jsonify(edges=edges)
 
 if __name__ == "__main__":

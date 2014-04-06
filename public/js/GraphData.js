@@ -3,11 +3,14 @@ function GraphData($rootScope,$http,$location) {
         'responseType': 'json'
     })
         .success(function (graph, error) {
-            this.data = graph;
-            this.emit('select.node', '341');
+            this.__data = graph;
+            this.emit('load');
+            var id = this.$location.search().id;
+            id = id || 341;
+            this.emit('select.node', id);
         }.bind(this));
     this.events = {};
-    this.data = {nodes:{},links:{}};
+    this.__data = {nodes:{},links:{}};
     this.$location = $location;
     $rootScope.$on('$locationChangeSuccess',function(){
         var id = this.$location.search().id;
@@ -16,13 +19,22 @@ function GraphData($rootScope,$http,$location) {
     }.bind(this));
 }
    
+GraphData.prototype.nodes = function () {
+    if(this.__arr)
+        return this.__arr
+    this.__arr = [];
+    for(var x in this.__data.nodes){
+        this.__arr.push(this.__data.nodes[x]);
+    }
+    return this.__arr;
+}
 
 GraphData.prototype.node = function (id) {
-    return this.data.nodes[id];
+    return this.__data.nodes[id];
 }
 
 GraphData.prototype.links = function (id) {
-    return this.data.links[id];
+    return this.__data.links[id];
 }
 
 GraphData.prototype.emit = function (event) {

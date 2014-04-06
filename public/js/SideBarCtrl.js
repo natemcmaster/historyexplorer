@@ -6,6 +6,7 @@ function SideBarCtrl($scope, GraphData) {
         $scope.title = node.title;
         $scope.related = links;
         $scope.heroImage = node.image;
+        $scope.imageSize = node.image_size;
         // $scope.caption = 'Portrait of Leonardo da Vinci';
         // $scope.subtitle = '1452-1519';
         $scope.description = node.description;

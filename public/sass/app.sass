@@ -11,6 +11,9 @@ div,p,span,a
 
 html,body
     height: 100%
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak 
+    display: none !important
         
 /* COLORS */
 $primary: #0079d1
@@ -49,6 +52,7 @@ $headerHeight: 45px
         
 @import sidebar
 @import graph
+@import searchbar
 
 =sidebarTransision
     +transition(width 400ms ease)
@@ -57,9 +61,9 @@ $headerHeight: 45px
     width: 100%
     z-index: 50
     &:after 
-    content: ""
-    display: table
-    clear: both
+        content: ""
+        display: table
+        clear: both
     .sidebar
         +sidebar(33%)
     .content
@@ -69,38 +73,12 @@ $headerHeight: 45px
         width: 67%
         height: 100%
         display: inline-block
-        $toolbar: 40px
-        .toolbar
-            position: absolute
-            top: 0
-            width: 100%
-            height: $toolbar
-            border-bottom: $pageSeparator
-            padding-right: 10px
-            $searchIcon: 20px
-            
-            span[class^="icon"]
-                width: $searchIcon
-                position: absolute
-                left: 10px
-                top: 10px
-            
-            input[type="search"]
-                +bodyFont
-                -webkit-appearance: caret
-                height: 100%
-                outline: none
-                border: none
-                width: 100%
-                $pad: 10px
-                padding-left: $searchIcon + $pad
-                padding-right: $pad
-                font-size: $toolbar - 2 * $pad
+        $searchbar: 40px
+        +searchbar($searchbar)
         
         .graph
-            padding-top: $toolbar
+            padding-top: $searchbar
             height: 100%
-            backgroun
             +graph
         
     height: 100%

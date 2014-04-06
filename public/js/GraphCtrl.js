@@ -1,8 +1,8 @@
 // animate: http://stackoverflow.com/questions/11007640/fit-text-into-svg-element-using-d3-js
 
-function Link(a,b) {
-    this.a=a;
-    this.b=b;
+function Link(a, b) {
+    this.a = a;
+    this.b = b;
 }
 
 function GraphCtrl($scope, $http, $element, GraphData) {
@@ -11,9 +11,11 @@ function GraphCtrl($scope, $http, $element, GraphData) {
     this.MAX_LEVEL = 2;
     this.maxNodeRadius = 20;
     this.minNodeRadius = 10;
-    this.lineSpacing = 15;
+    this.lineSpacing = function(l) {
+        return 15 - 2 * l;
+    }
     this.GraphData = GraphData;
-    
+
     this.svg = d3.select($element[0])
         .append('svg')
         .attr('viewBox', [0, 0, this.w, this.h].join(' '))
@@ -21,17 +23,17 @@ function GraphCtrl($scope, $http, $element, GraphData) {
 
     this.links = this.svg.selectAll('.link');
     this.nodes = this.svg.selectAll('.node');
-    
-    GraphData.on('select.node',function(event,id){
+
+    GraphData.on('select.node', function(event, id) {
         this.centerOnNode(id);
     }.bind(this));
 }
 
-GraphCtrl.prototype.selectNode = function(id){
-    this.GraphData.emit('select.node',id);
+GraphCtrl.prototype.selectNode = function(id) {
+    this.GraphData.emit('select.node', id);
 }
 
-GraphCtrl.prototype.centerOnNode = function (ctr) {
+GraphCtrl.prototype.centerOnNode = function(ctr) {
     this.svg.selectAll('.link,.node,.node-label').data([]).exit().remove();
     var center = this.GraphData.node(ctr);
     if (!center)
@@ -48,7 +50,7 @@ GraphCtrl.prototype.centerOnNode = function (ctr) {
     return;
 }
 
-GraphCtrl.prototype.drawChildren = function (pid, level) {
+GraphCtrl.prototype.drawChildren = function(pid, level) {
     level = level || 0;
     if (level > this.MAX_LEVEL)
         return;
@@ -56,7 +58,7 @@ GraphCtrl.prototype.drawChildren = function (pid, level) {
     var parent = this.GraphData.node(pid);
     if (!children)
         return;
-    children = children.filter(function (id) {
+    children = children.filter(function(id) {
         var node = this.GraphData.node(id);
         return node && !node.queued;
     }.bind(this));
@@ -68,14 +70,14 @@ GraphCtrl.prototype.drawChildren = function (pid, level) {
     var c = level == 1 ? children.length : children.length + 1;
     var subArc = pie / c;
     var baseTilt = parent.tilt - pie / 2;
-    children.forEach(function (id, i) {
+    children.forEach(function(id, i) {
         var s = this.GraphData.node(id);
         s.level = level;
         s.arc = subArc;
         s.tilt = (i + 1) * subArc + baseTilt;
         s.toX = radius * Math.cos(s.tilt) + parent.toX;
         s.toY = radius * Math.sin(s.tilt) + parent.toY;
-        var link = new Link(parent,s);
+        var link = new Link(parent, s);
         this.queue(link);
         this.queue(s);
         return s;
@@ -84,16 +86,16 @@ GraphCtrl.prototype.drawChildren = function (pid, level) {
         this.drawChildren(children[i], level + 1);
 }
 
-GraphCtrl.prototype.resetQueue = function () {
+GraphCtrl.prototype.resetQueue = function() {
     if (this._queue)
-        this._queue.forEach(function (s) {
+        this._queue.forEach(function(s) {
             s.queued = false;
         })
     this._queue = [];
 }
 
-GraphCtrl.prototype.queue = function (node) {
-    ['x', 'y', 'toX', 'toY'].forEach(function (p) {
+GraphCtrl.prototype.queue = function(node) {
+    ['x', 'y', 'toX', 'toY'].forEach(function(p) {
         this[p] = this[p] || 0;
     }.bind(node));
     node.queued = true;
@@ -119,10 +121,11 @@ function maxChildArc(distFromParent, childRadius, parentArcAngle) {
     var cos = Math.cos(theta);
     var d1 = distFromParent;
     var r2 = childRadius;
-    return 2 * Math.acos(d1 / r2 * (1 - cos) / (cos - 1));
+    var narrowing = 1.5
+    return narrowing * Math.acos(d1 / r2 * (1 - cos) / (cos - 1));
 }
 
-GraphCtrl.prototype.draw = function () {
+GraphCtrl.prototype.draw = function() {
     var links = [];
     var nodes = [];
     for (var x = this._queue.length - 1; x >= 0; x--) {
@@ -134,14 +137,14 @@ GraphCtrl.prototype.draw = function () {
         }
     }
     var scale = 100;
-    var radius = function(d){
-        var flex = this.maxNodeRadius-this.minNodeRadius;
-        return flex/(d.level+1) + this.minNodeRadius;
+    var radius = function(d) {
+        var flex = this.maxNodeRadius - this.minNodeRadius;
+        return flex / (d.level + 1) + this.minNodeRadius;
     }.bind(this);
-    var normToX = function (n) {
+    var normToX = function(n) {
         return n.toX * scale + this.w / 2;
     }.bind(this);
-    var normToY = function (n) {
+    var normToY = function(n) {
         return n.toY * scale + this.h / 2;
     }.bind(this);
 
@@ -149,48 +152,61 @@ GraphCtrl.prototype.draw = function () {
         .enter()
         .append('line')
         .attr('class', 'link')
-        .attr('x1', function(l){
+        .attr('x1', function(l) {
             return normToX(l.a);
-        }).attr('y1',function(l){
+        }).attr('y1', function(l) {
             return normToY(l.a);
         })
-        .attr('x2', function(l){
+        .attr('x2', function(l) {
             return normToX(l.b);
-        }).attr('y2', function(l){
+        }).attr('y2', function(l) {
             return normToY(l.b);
         });
 
-    var d = this.nodes.data(nodes);
-    var g = d.enter().append('g');
+    var d = this.nodes.data(nodes).enter();
 
-        g.on('click',function(d){
-            this.selectNode(d.id);
-        }.bind(this))
-        .append('circle')
-        .attr('class', function (n) {
-            return 'node level-' + n.level;
-        })
-        .attr('cx', normToX)
-        .attr('cy', normToY)
-        .attr('name', function (d) {
-            return d.id
-        })
-        .attr('r', radius);
     var ls = this.lineSpacing;
-    g.append('text')
-        .attr('class', 'node-label')
+    var goToNode = function(d) {
+        this.selectNode(d.id);
+    }.bind(this);
+
+    d.append('text')
+        .on('click', goToNode)
+        .attr('class', function(n) {
+            return 'node-label level-' + n.level;
+        })
         .attr('x', normToX)
-        .attr('y', function(d){
+        .attr('y', function(d) {
             var cy = normToY(d);
-            return cy+radius(d);
-        }).each(function (d) {
+            return cy + radius(d);
+        }).each(function(d) {
             var el = d3.select(this);
             var words = d.title.split(' ');
             el.text('');
 
             for (var i = 0; i < words.length; i++) {
-                var tspan = el.append('tspan').text(words[i]);
-                tspan.attr('x', normToX(d)).attr('dy', ls);
+                var content = words[i];
+                //handle short words
+                if (words[i + 1] && words[i + 1].length <= 3) {
+                    content += ' ' + words[i + 1];
+                    i++;
+                }
+                var tspan = el.append('tspan').text(content);
+                tspan.attr('x', normToX(d)).attr('dy', ls(d.level));
             }
         });
+
+    d.append('circle')
+        .on('click', goToNode)
+        .attr('class', function(n) {
+            return 'node level-' + n.level;
+        })
+        .attr('cx', normToX)
+        .attr('cy', normToY)
+        .attr('name', function(d) {
+            return d.id
+        })
+        .attr('r', radius);
+
+
 }
