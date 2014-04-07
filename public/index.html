@@ -41,8 +41,8 @@
                 <div class="searchbar" ng-controller="SearchCtrl">
                     <span class="icon-magnifying-glass"></span>
                     <input type="search" placeholder="Search for a term" ng-model="searchQuery" ng-blur="clear(100)" ng-submit="$event.preventDefault()" ng-keydown="searchKey($event)"/>
-                    <div class="matches" ng-if="matches">
-                        <div class="match" ng-repeat="node in matches" ng-click="goTo(node.id)" ng-class="{active: $parent.selectedResult == $index}">
+                    <div class="matches" ng-if="matches" ng-mouseleave="$parent.selectedResult=-1">
+                        <div class="match" ng-repeat="node in matches" ng-click="goTo(node.id)" ng-class="{active: $parent.selectedResult == $index}" ng-mouseenter="$parent.selectedResult=$index">
                             {{node.title}}
                         </div>
                     </div>
