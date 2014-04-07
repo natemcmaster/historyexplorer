@@ -24,8 +24,8 @@ div, span, input[type="text"], input[type="search"] {
 
 @font-face {
   font-family: 'icomoon';
-  src: url("/fonts/icomoon.eot?-uzgax7");
-  src: url("/fonts/icomoon.eot?#iefix-uzgax7") format("embedded-opentype"), url("/fonts/icomoon.woff?-uzgax7") format("woff"), url("/fonts/icomoon.ttf?-uzgax7") format("truetype"), url("/fonts/icomoon.svg?-uzgax7#icomoon") format("svg");
+  src: url("../fonts/icomoon.eot?-uzgax7");
+  src: url("../fonts/icomoon.eot?#iefix-uzgax7") format("embedded-opentype"), url("../fonts/icomoon.woff?-uzgax7") format("woff"), url("../fonts/icomoon.ttf?-uzgax7") format("truetype"), url("../fonts/icomoon.svg?-uzgax7#icomoon") format("svg");
   font-weight: normal;
   font-style: normal; }
 [class^="icon-"],
@@ -344,5 +344,4 @@ a {
     width: 0%; }
   .page.hide-sidebar .content {
     width: 100%; }
-
-/*# sourceMappingURL=app.css.map */
+    

@@ -1,5 +1,5 @@
 function GraphData($rootScope,$http,$location) {
-    $http.get('/data.json', {
+    $http.get('./data.json', {
         'responseType': 'json'
     })
         .success(function (graph, error) {
