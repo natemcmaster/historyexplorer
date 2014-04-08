@@ -78,10 +78,10 @@ def get_edges():
 	edges=[]
 	with open_db() as conn:
 		with conn.cursor() as cursor:
-			cursor.execute('select id,name,description,all_images,image,image_size from nodes order by name')
+			cursor.execute('select id,name,description,all_images,image,image_size,sourceurl from nodes order by name')
 			edges = cursor.fetchall()
 
-	edges = map(lambda x: {'id':x[0],'image':x[4],'title':x[1],'description':x[2],'image_size':x[5],'images':list(set(json.loads(x[3])))},edges)
+	edges = map(lambda x: {'id':x[0],'url':x[6],'image':x[4],'title':x[1],'description':x[2],'image_size':x[5],'images':list(set(json.loads(x[3])))},edges)
 	return jsonify(edges=edges)
 
 if __name__ == "__main__":

@@ -57,21 +57,14 @@
 	<div class="container-fluid content" ng-controller='Connector'>
 		<div class="status">{{status}}</div>
 		<div class="row">
+
 			<div class="col-lg-3">
 				<h2>{{first.title}}</h2>
 				<ul class="nav nav-pills nav-stacked scrollable">
-					<li ng-repeat="edge in edges" ng-click="$parent.show=edge;$parent.first=edge" ng-class="{active:$parent.first.id==edge.id}">
-						<a href="#">{{ edge.title }}
-						<button class="btn btn-xs btn-success pull-right" ng-click="$parent.makePair(edge.id); $event.stopPropagation()"><span class="glyphicon glyphicon-ok"></span></button>
-							<button class="btn btn-xs btn-primary pull-right" ng-click="$parent.needsReview(edge.id); $event.stopPropagation()"><span class="glyphicon glyphicon-eye-open"></span></button>
-						</a>
-					</li>
-				</ul>
-			</div>
-			<div class="col-lg-3">
-				<ul class="nav nav-pills nav-stacked scrollable">
-					<li ng-repeat="edge in edges">
-						<a href="#" ng-click="$parent.show=edge">{{ edge.title }}
+					<li ng-repeat="edge in edges" ng-click="$parent.show=edge" ng-class="{active:$parent.first.id==edge.id}">
+						<a href="#">
+							<button class="btn btn-xs btn-warning pull-left" ng-click="$parent.first=edge; $event.stopPropagation()">&bull;</button>
+							&nbsp;&nbsp;{{ edge.title }}
 							<button class="btn btn-xs btn-success pull-right" ng-click="$parent.makePair(edge.id); $event.stopPropagation()"><span class="glyphicon glyphicon-ok"></span></button>
 							<button class="btn btn-xs btn-primary pull-right" ng-click="$parent.needsReview(edge.id); $event.stopPropagation()"><span class="glyphicon glyphicon-eye-open"></span></button>
 						</a>
@@ -79,15 +72,20 @@
 				</ul>
 			</div>
 			<div class="col-lg-6 scrollable">
-				<h2>{{show.title}}</h2>
+				<h2><button class="btn btn-xs btn-warning pull-left" ng-click="first=show">&bull;</button><a ng-href="{{show.url}}" target="wiki">{{show.title}}</a></h2>
 				<p>{{show.description | cut:1000:true}}</p>
 				<div class="hero" ng-show="show.image">
 					<div ng-style="{'background-image':'url('+show.image+')','background-size':show.image_size}"><button class="btn btn-danger btn-xs" ng-click="show.image=''"><span class="glyphicon glyphicon-remove"></span></button></div>
 
 				</div>
-				<button ng-click="toggleImageSize()" class="btn btn-small">Switch</button>
-				<input ng-model="imageSize" class="col-sm-4" type="text">
-				<input ng-model="imageUrl" class="col-sm-4" type="text">
+				<div class="form-inline">
+					<button ng-click="toggleImageSize()" class="btn btn-small">Switch</button>
+					<input ng-model="imageSize" class=" form-control col-sm-4" type="text">
+				</div>
+				<div class="form-inline">
+					<input ng-model="imageUrl" class=" form-control col-sm-4" type="text">
+					
+				</div>
 				<div class="images" ng-if="!show.image">
 					<a href="#" class="thumbnail" ng-if="imageUrl" ng-click="postImage(show.id,imageUrl)" title="{{imageUrl}}">
 						<div ng-style="{'background-image':'url('+imageUrl+')','background-size':imageSize}"></div>
