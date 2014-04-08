@@ -9,8 +9,8 @@ function GraphCtrl($scope, $http, $element, GraphData) {
     this.w = 500;
     this.h = 500;
     this.MAX_LEVEL = 2;
-    this.maxNodeRadius = 20;
-    this.minNodeRadius = 10;
+    this.maxNodeRadius = 14;
+    this.minNodeRadius = 5;
     this.lineSpacing = function(l) {
         return 15 - 2 * l;
     }
