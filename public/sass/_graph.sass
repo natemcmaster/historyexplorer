@@ -8,24 +8,39 @@
         .link 
             stroke: darken(white,15%)
             stroke-width: 1.5px
+            +transition(all 500ms ease)
 
-        .node 
+        %node 
             cursor: pointer
-            fill: lighten(invert($primary),35%)
             stroke: lighten(black,35%)
             stroke-width: 1.5px
-            
-            &.level-0
-                fill: lighten($highlight, 20%)
-            &.level-1
-                fill: lighten(invert($primary),25%)
-        .node-label
+            +transition(all 500ms ease)
+
+        %node-label
             cursor: pointer
-            font-size: 10pt
             text-anchor: middle
-            &.level-0
+            +transition(all 500ms ease)
+
+        .level-0
+            .node
+                fill: lighten($highlight, 20%)
+                @extend %node
+            .node-label
                 font-size: 10pt
-            &.level-1
+                @extend %node-label
+
+        .level-1
+            .node
+                fill: lighten(invert($primary),25%)
+                @extend %node
+            .node-label
                 font-size: 8pt
-            &.level-2
+                @extend %node-label
+
+        .level-2
+            .node
+                fill: lighten(invert($primary),35%)
+                @extend %node
+            .node-label
                 font-size: 6pt
+                @extend %node-label

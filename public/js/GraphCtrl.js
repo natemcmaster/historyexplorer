@@ -19,10 +19,12 @@ function GraphCtrl($scope, $http, $element, GraphData) {
     this.svg = d3.select($element[0])
         .append('svg')
         .attr('viewBox', [0, 0, this.w, this.h].join(' '))
-        .attr('preserveAspectRatio', 'xMidYMid meet');
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .append('g')
+        .attr('transform', 'translate(' + this.w / 2 + ',' + this.h / 2 + ')');
 
-    this.links = this.svg.selectAll('.link');
-    this.nodes = this.svg.selectAll('.node');
+    this.svg.append('g').attr('id', 'lines');
+    this.svg.append('g').attr('id', 'nodes');
 
     GraphData.on('select.node', function(event, id) {
         this.centerOnNode(id);
@@ -34,17 +36,17 @@ GraphCtrl.prototype.selectNode = function(id) {
 }
 
 GraphCtrl.prototype.centerOnNode = function(ctr) {
-    this.svg.selectAll('.link,.node,.node-label').data([]).exit().remove();
     var center = this.GraphData.node(ctr);
     if (!center)
         throw new Error('Could not find that node');
-    delete center.toX;
-    delete center.toY;
     center.tilt = 0;
     center.level = 0;
+    center.x = 0;
+    center.y = 0;
+    center.parent = null;
     center.arc = 2 * Math.PI;
     this.resetQueue();
-    this.queue(center);
+    this.queueNode(center);
     this.drawChildren(ctr, 1);
     this.draw();
     return;
@@ -75,11 +77,12 @@ GraphCtrl.prototype.drawChildren = function(pid, level) {
         s.level = level;
         s.arc = subArc;
         s.tilt = (i + 1) * subArc + baseTilt;
-        s.toX = radius * Math.cos(s.tilt) + parent.toX;
-        s.toY = radius * Math.sin(s.tilt) + parent.toY;
+        s.x = radius * Math.cos(s.tilt) + parent.x;
+        s.y = radius * Math.sin(s.tilt) + parent.y;
+        s.parent = parent;
         var link = new Link(parent, s);
-        this.queue(link);
-        this.queue(s);
+        this.queueLink(link);
+        this.queueNode(s);
         return s;
     }.bind(this));
     for (var i in children)
@@ -87,24 +90,29 @@ GraphCtrl.prototype.drawChildren = function(pid, level) {
 }
 
 GraphCtrl.prototype.resetQueue = function() {
-    if (this._queue)
-        this._queue.forEach(function(s) {
+    if (this._nodes)
+        this._nodes.forEach(function(s) {
+            s.queued = false;
+        });
+    if (this._links)
+        this._links.forEach(function(s) {
             s.queued = false;
         })
-    this._queue = [];
+    this._nodes = [];
+    this._links = [];
 }
 
-GraphCtrl.prototype.queue = function(node) {
-    ['x', 'y', 'toX', 'toY'].forEach(function(p) {
-        this[p] = this[p] || 0;
-    }.bind(node));
+GraphCtrl.prototype.queueNode = function(node) {
     node.queued = true;
-    this._queue.push(node);
+    this._nodes.push(node);
 }
 
-/**
-for now, it makes concentric circles
-**/
+GraphCtrl.prototype.queueLink = function(link) {
+    link.queued = true;
+    this._links.push(link);
+}
+
+// for now, it makes concentric circles
 function levelDistance(level) {
     if (level < 0)
         return 0;
@@ -126,60 +134,107 @@ function maxChildArc(distFromParent, childRadius, parentArcAngle) {
 }
 
 GraphCtrl.prototype.draw = function() {
-    var links = [];
-    var nodes = [];
-    for (var x = this._queue.length - 1; x >= 0; x--) {
-        var s = this._queue[x];
-        if (s instanceof Link) {
-            links.push(s);
-        } else {
-            nodes.push(s);
-        }
-    }
+    var transitionDuration = 500;
     var scale = 100;
+
     var radius = function(d) {
         var flex = this.maxNodeRadius - this.minNodeRadius;
         return flex / (d.level + 1) + this.minNodeRadius;
     }.bind(this);
-    var normToX = function(n) {
-        return n.toX * scale + this.w / 2;
-    }.bind(this);
-    var normToY = function(n) {
-        return n.toY * scale + this.h / 2;
-    }.bind(this);
+    var normx = function(n) {
+        return n.x * scale;
+    };
+    var normy = function(n) {
+        return n.y * scale;
+    };
 
-    this.links.data(links)
-        .enter()
-        .append('line')
-        .attr('class', 'link')
-        .attr('x1', function(l) {
-            return normToX(l.a);
-        }).attr('y1', function(l) {
-            return normToY(l.a);
-        })
-        .attr('x2', function(l) {
-            return normToX(l.b);
-        }).attr('y2', function(l) {
-            return normToY(l.b);
+    var lines = this.svg.select('#lines').selectAll('.link')
+        .data(this._links, function(d) {
+            return (d.a.id > d.b.id) ? d.a.id * 1000 + d.b.id : d.a.id + d.b.id * 1000;
         });
 
-    var d = this.nodes.data(nodes).enter();
+    lines.enter()
+        .append('line')
+        .attr('class', 'link')
+        .attr('x1', function(d) {
+            var pt = d.a.parent ? d.a.parent : d.a;
+            return normx(pt);
+        }).attr('y1', function(d) {
+            var pt = d.a.parent ? d.a.parent : d.a;
+            return normy(pt);
+        })
+        .attr('x2', function(d) {
+            var pt = d.b.parent ? d.b.parent : d.b;
+            return normx(pt);
+        }).attr('y2', function(d) {
+            var pt = d.b.parent ? d.b.parent : d.b;
+            return normy(pt);
+        })
+        .transition()
+        .delay(500)
+        .duration(500)
+        .attr('x1', function(l) {
+            return normx(l.a);
+        }).attr('y1', function(l) {
+            return normy(l.a);
+        })
+        .attr('x2', function(l) {
+            return normx(l.b);
+        }).attr('y2', function(l) {
+            return normy(l.b);
+        });
+
+
+    lines.transition()
+        .duration(500)
+        .attr('x1', function(l) {
+            return normx(l.a);
+        }).attr('y1', function(l) {
+            return normy(l.a);
+        })
+        .attr('x2', function(l) {
+            return normx(l.b);
+        }).attr('y2', function(l) {
+            return normy(l.b);
+        });
+
+    lines.exit().remove();
 
     var ls = this.lineSpacing;
     var goToNode = function(d) {
         this.selectNode(d.id);
     }.bind(this);
 
-    d.append('text')
+    var items = this.svg.select('#nodes').selectAll('.item')
+        .data(this._nodes, function(d) {
+            return d.id;
+        });
+
+    //enter
+    var group = items.enter()
+        .append('g')
+        // .style('opacity',0)
         .on('click', goToNode)
-        .attr('class', function(n) {
-            return 'node-label level-' + n.level;
+        .attr('class', function(d) {
+            return 'item level-' + d.level;
         })
-        .attr('x', normToX)
-        .attr('y', function(d) {
-            var cy = normToY(d);
-            return cy + radius(d);
-        }).each(function(d) {
+        .attr('transform', function(d) {
+            var pt = d.parent ? d.parent : d;
+            return 'translate(' + pt.x * scale + ',' + pt.y * scale + ')'
+        });
+
+    group.transition()
+        .delay(500)
+        .duration(500)
+        // .style('opacity',100)
+        .attr('transform', function(d) {
+            return 'translate(' + d.x * scale + ',' + d.y * scale + ')'
+        })
+        ;
+
+    group.append('text')
+        .attr('class', 'node-label')
+        .each(function(d) {
             var el = d3.select(this);
             var words = d.title.split(' ');
             el.text('');
@@ -192,21 +247,38 @@ GraphCtrl.prototype.draw = function() {
                     i++;
                 }
                 var tspan = el.append('tspan').text(content);
-                tspan.attr('x', normToX(d)).attr('dy', ls(d.level));
+                tspan.attr('x', 0).attr('dy', ls(d.level));
             }
-        });
+        })
+        .attr('x', 0)
+        .attr('y', radius);
 
-    d.append('circle')
-        .on('click', goToNode)
-        .attr('class', function(n) {
-            return 'node level-' + n.level;
-        })
-        .attr('cx', normToX)
-        .attr('cy', normToY)
-        .attr('name', function(d) {
-            return d.id
-        })
-        .attr('r', radius);
+    group.append('circle')
+        .attr('r', radius)
+        .attr('cx', 0)
+        .attr('cy', 0)
+        .attr('class', 'node');
+
+    //update
+    var updatedGroup = items.attr('class', function(d) {
+        return 'item level-' + d.level;
+    })
+        .attr('x', 0)
+        .attr('y', 0)
+        .transition()
+        .duration(500)
+        .attr('transform', function(d) {
+            return 'translate(' + d.x * scale + ',' + d.y * scale + ')'
+        });
+    updatedGroup.select('circle')
+        .attr('r',radius);
+    updatedGroup.select('text')
+        .attr('y',radius)
+
+
+    //exit
+    items.exit().remove();
+
 
 
 }
