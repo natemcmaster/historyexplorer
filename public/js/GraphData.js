@@ -38,6 +38,45 @@ GraphData.prototype.choseRandomStart = function(){
         this.emit('select.node',node.id);
 }
 
+GraphData.prototype.tree = function(id){
+    function makeObj(node){
+        return {
+            id: node.id,
+            name: node.title,
+            children: []
+        };
+    }
+
+    var inTree={};
+    function loadChildren(parent){
+        if(inTree[parent.id]){
+            return;
+        }
+        inTree[parent.id]=true;
+        var c = this.links(parent.id);
+        if(!c)
+            return;
+        var funcs=[];
+        for (var i = c.length - 1; i >= 0; i--) {
+            var id = c[i];
+            if(inTree[id])
+                continue;
+            var child = makeObj(this.node(id));
+            parent.children.push(child);
+            funcs.push(function(){
+                loadChildren.call(this,child);
+            }.bind(this));
+        };
+        funcs.forEach(function(f){
+            f();
+        })
+    }
+
+    var tree = makeObj(this.node(id));
+    loadChildren.call(this,tree);
+    return tree;
+}
+
 GraphData.prototype.nodes = function() {
     if (this.__arr)
         return this.__arr
