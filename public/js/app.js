@@ -1,4 +1,7 @@
 var graphApp = angular.module('graphApp', []);
+graphApp.config(function($locationProvider){
+    $locationProvider.html5Mode(true);
+})
 graphApp.service('GraphData', ['$rootScope','$http','$location',GraphData]);
 
 graphApp.filter('cut', function () {
