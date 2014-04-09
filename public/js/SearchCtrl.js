@@ -13,7 +13,7 @@ function SearchCtrl($scope, $element , GraphData) {
     }
 
     $scope.$on('keypress', function(scope, e) {
-        if (e.which == 47) {
+        if (e.which == 47 || (e.metaKey || e.ctrlKey) && e.which==102) {
             cancel(e);
             $element.find('input').focus()
         }

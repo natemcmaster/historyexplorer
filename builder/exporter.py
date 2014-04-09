@@ -13,7 +13,13 @@ def export():
 			if not row['node_from'] in out['links']:	
 				out['links'][row['node_from']]=[]
 			out['links'][row['node_from']].append(row['node_to'])
+	todel=[]
+	for key in out['nodes']:
+		if not key in out['links']:
+			todel.append(key)
 
+	for i in todel:
+		del out['nodes'][i]
 	return out
 
 def writefile(filename):
