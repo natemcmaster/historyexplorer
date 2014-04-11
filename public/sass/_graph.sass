@@ -4,8 +4,9 @@
         height: 100%
         width: 100%
         display: inline-block
-            
+    
         .link 
+            fill: none
             stroke: darken(white,15%)
             stroke-width: 1.5px
             +transition(all 500ms ease)
@@ -20,6 +21,14 @@
             cursor: pointer
             text-anchor: middle
             +transition(all 500ms ease)
+
+        [class^="level-"]
+            .node
+                @extend %node
+                fill: lighten(invert($primary),55%)
+            .node-label
+                font-size: 5pt
+                @extend %node-label
 
         .level-0
             .node
@@ -44,3 +53,4 @@
             .node-label
                 font-size: 6pt
                 @extend %node-label
+

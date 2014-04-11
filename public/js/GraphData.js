@@ -39,17 +39,19 @@ GraphData.prototype.choseRandomStart = function(){
 }
 
 GraphData.prototype.tree = function(id){
-    function makeObj(node){
+    var maxDepth = 3;
+    function makeObj(node,level){
         return {
             id: node.id,
             name: node.title,
+            level: level,
             children: []
         };
     }
 
     var inTree={};
     function loadChildren(parent){
-        if(inTree[parent.id]){
+        if(inTree[parent.id] || parent.level >= maxDepth){
             return;
         }
         inTree[parent.id]=true;
@@ -61,7 +63,7 @@ GraphData.prototype.tree = function(id){
             var id = c[i];
             if(inTree[id])
                 continue;
-            var child = makeObj(this.node(id));
+            var child = makeObj(this.node(id),parent.level+1);
             parent.children.push(child);
             funcs.push(function(){
                 loadChildren.call(this,child);
@@ -72,7 +74,7 @@ GraphData.prototype.tree = function(id){
         })
     }
 
-    var tree = makeObj(this.node(id));
+    var tree = makeObj(this.node(id),0);
     loadChildren.call(this,tree);
     return tree;
 }
