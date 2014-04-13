@@ -23,8 +23,9 @@ function GraphData($rootScope, $http, $location) {
         if (id && this.node(id) && this.selected !== id) {
             this.emit('select.node', id, true);
         } 
-        if(window.ga)
-            window.ga('send','pageview');
+        if(window.ga){
+            window.ga('send','pageview',this.$location.url());
+        }
     }.bind(this));
 }
 
