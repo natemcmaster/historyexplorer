@@ -1,6 +1,6 @@
 History Explorer
 -------
-[natemcmaster.com/historyexplorer](http://www.natemcmaster.com/historyexplorer/)
+[natemcmaster.com/projects/historyexplorer](http://www.natemcmaster.com/projects/historyexplorer/)
 
 Explore the connections between people, places, and ideas.
 
